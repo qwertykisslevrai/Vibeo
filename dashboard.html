@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+// 🔑 Même config que index.html
+const firebaseConfig = {
+    apiKey: "AIzaSyAQkCNtVCzXyIFLNlj9iKQvaMcg197zpKY",
+    authDomain: "tttt-57bdb.firebaseapp.com",
+    projectId: "tttt-57bdb",
+    storageBucket: "tttt-57bdb.firebasestorage.app",
+    messagingSenderId: "136572123296",
+    appId: "1:136572123296:web:886d093854c6827f10b1c5",
+    measurementId: "G-3E8ZVGPDTX"
+  };
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Vérifie si utilisateur connecté
+onAuthStateChanged(auth, user => {
+  if(!user || !user.emailVerified){
+    alert("Tu dois te connecter !");
+    window.location.href = "index.html";
+  }
+});
+
+// Déconnexion
+window.logout = () => {
+  signOut(auth);
+  window.location.href = "index.html";
+};
+</script>
+</head>
+<body>
+<h2>Bienvenue sur le Dashboard !</h2>
+<button onclick="logout()">Se déconnecter</button>
+</body>
+</html>

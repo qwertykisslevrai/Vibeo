@@ -2,12 +2,18 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Créer un compte Firebase</title>
+<title>Inscription / Connexion Firebase</title>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-// 🔑 Remplace par ta config Firebase
+// 🔑 Config Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyAQkCNtVCzXyIFLNlj9iKQvaMcg197zpKY",
     authDomain: "tttt-57bdb.firebaseapp.com",
@@ -23,9 +29,8 @@ const auth = getAuth(app);
 
 // Fonction création de compte
 window.signup = async () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
+  const email = document.getElementById("sEmail").value;
+  const password = document.getElementById("sPass").value;
   if(password.length < 6){ alert("Mot de passe trop court"); return; }
 
   try {
@@ -36,12 +41,42 @@ window.signup = async () => {
     alert(e.message);
   }
 };
+
+// Fonction connexion
+window.login = async () => {
+  const email = document.getElementById("lEmail").value;
+  const password = document.getElementById("lPass").value;
+
+  try {
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+
+    if(!userCred.user.emailVerified){
+      alert("Email non vérifié !");
+      return;
+    }
+
+    // 🔑 Redirection vers dashboard
+    window.location.href = "dashboard.html";
+
+  } catch(e){
+    alert(e.message);
+  }
+};
 </script>
+
 </head>
 <body>
 <h2>Créer un compte</h2>
-<input id="email" type="email" placeholder="Email">
-<input id="password" type="password" placeholder="Mot de passe">
+<input id="sEmail" type="email" placeholder="Email">
+<input id="sPass" type="password" placeholder="Mot de passe">
 <button onclick="signup()">S'inscrire</button>
+
+<hr>
+
+<h2>Connexion</h2>
+<input id="lEmail" type="email" placeholder="Email">
+<input id="lPass" type="password" placeholder="Mot de passe">
+<button onclick="login()">Se connecter</button>
+
 </body>
 </html>
