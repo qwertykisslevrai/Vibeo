@@ -2,20 +2,12 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Auth Firebase - Simple</title>
-
+<title>Créer un compte Firebase</title>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendEmailVerification,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-/* 🔑 CONFIG FIREBASE */
+// 🔑 Remplace par ta config Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyAQkCNtVCzXyIFLNlj9iKQvaMcg197zpKY",
     authDomain: "tttt-57bdb.firebaseapp.com",
@@ -29,89 +21,27 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/* 👀 Gestion affichage */
-const show = (id) => {
-  ["signup","login","dashboard"].forEach(s =>
-    document.getElementById(s).style.display = "none"
-  );
-  document.getElementById(id).style.display = "block";
-};
-
-/* 🔄 État utilisateur */
-onAuthStateChanged(auth, user => {
-  if (user && user.emailVerified) {
-    show("dashboard");
-  } else {
-    show("login");
-  }
-});
-
-/* 📝 INSCRIPTION */
+// Fonction création de compte
 window.signup = async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  if(password.length < 6){ alert("Mot de passe trop court"); return; }
+
   try {
-    const email = sEmail.value;
-    const pass = sPass.value;
-
-    const userCred =
-      await createUserWithEmailAndPassword(auth, email, pass);
-
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
     await sendEmailVerification(userCred.user);
-    alert("Vérifie ton email !");
-    show("login");
-  } catch (e) {
+    alert("Compte créé ! Vérifie ton email avant de te connecter.");
+  } catch(e){
     alert(e.message);
   }
 };
-
-/* 🔐 CONNEXION */
-window.login = async () => {
-  try {
-    const userCred =
-      await signInWithEmailAndPassword(auth, lEmail.value, lPass.value);
-
-    if (!userCred.user.emailVerified) {
-      alert("Email non vérifié !");
-      await signOut(auth);
-    }
-  } catch (e) {
-    alert(e.message);
-  }
-};
-
-/* 🚪 DÉCONNEXION */
-window.logout = () => signOut(auth);
 </script>
-
-<style>
-body { font-family: Arial; background:#f0f0f0; text-align:center; padding-top:50px; }
-.box { background:white; width:300px; margin:auto; padding:20px; border-radius:8px; }
-input, button { width:100%; margin:6px 0; padding:8px; }
-button { background:#007bff; color:white; border:none; cursor:pointer; }
-</style>
 </head>
-
 <body>
-
-<div id="signup" class="box" style="display:none">
-  <h2>Créer un compte</h2>
-  <input id="sEmail" type="email" placeholder="Email">
-  <input id="sPass" type="password" placeholder="Mot de passe">
-  <button onclick="signup()">S'inscrire</button>
-</div>
-
-<div id="login" class="box">
-  <h2>Connexion</h2>
-  <input id="lEmail" type="email" placeholder="Email">
-  <input id="lPass" type="password" placeholder="Mot de passe">
-  <button onclick="login()">Se connecter</button>
-  <p><a href="#" onclick="show('signup')">Créer un compte</a></p>
-</div>
-
-<div id="dashboard" class="box" style="display:none">
-  <h2>Bienvenue 🎉</h2>
-  <p>Accès sécurisé</p>
-  <button onclick="logout()">Se déconnecter</button>
-</div>
-
+<h2>Créer un compte</h2>
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Mot de passe">
+<button onclick="signup()">S'inscrire</button>
 </body>
 </html>
