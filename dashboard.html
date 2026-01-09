@@ -7,6 +7,7 @@
 body{font-family:Arial;background:#eee;padding:20px}
 .box{background:white;padding:20px;border-radius:10px;margin-bottom:20px}
 input,button{width:100%;padding:10px;margin:10px 0}
+.code{background:#f4f4f4;padding:5px;border-radius:5px;font-family:monospace;}
 </style>
 
 <script type="module">
@@ -24,7 +25,6 @@ const firebaseConfig = {
   measurementId: "G-3E8ZVGPDTX"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -35,18 +35,24 @@ onAuthStateChanged(auth,user=>{
 });
 
 window.addVideo = async()=>{
+  if(!title.value || !url.value){
+    alert("Veuillez remplir le titre et le lien !");
+    return;
+  }
   await addDoc(collection(db,"videos"),{
-    title:title.value,
-    url:url.value, // lien Drive /preview
-    authorEmail:auth.currentUser.email,
-    authorUid:auth.currentUser.uid,
-    views:0,
-    date:new Date()
+    title: title.value,
+    url: url.value, // lien Drive /preview
+    authorEmail: auth.currentUser.email,
+    authorUid: auth.currentUser.uid,
+    views: 0,
+    date: new Date()
   });
   alert("Vidéo publiée !");
+  title.value = "";
+  url.value = "";
 };
 
-window.logout=()=>{
+window.logout = () => {
   signOut(auth);
   location.href="index.html";
 };
@@ -63,17 +69,22 @@ window.logout=()=>{
 
 <div class="box">
 <h2>Publier une vidéo</h2>
-<input id="title" placeholder="Titre">
+<input id="title" placeholder="Titre de la vidéo">
 <input id="url" placeholder="Lien Google Drive /preview">
 <button onclick="addVideo()">Publier</button>
 </div>
 
 <div class="box">
-<h3>📤 Comment publier</h3>
-<p>1. Upload sur Google Drive</p>
-<p>2. Partage → public</p>
-<p>3. Lien :</p>
-<code>https://drive.google.com/file/d/ID/preview</code>
+<h3>📤 Comment publier une vidéo</h3>
+<p>1. Upload votre vidéo sur <strong>Google Drive</strong>.</p>
+<p>2. Faites un clic droit sur la vidéo → <strong>Partager</strong>.</p>
+<p>3. Sélectionnez <strong>“Anyone with the link”</strong> et vérifiez que la permission est <strong>Viewer</strong>.</p>
+<p>4. Copiez le lien et transformez-le :</p>
+<p class="code">https://drive.google.com/file/d/ID_DE_LA_VIDEO/preview</p>
+<p>⚠ Remplacez /view?usp=sharing par /preview.</p>
+<p>5. Collez ce lien dans le champ “Lien Google Drive /preview” ci-dessus et cliquez sur <strong>Publier</strong>.</p>
+<p>✅ Votre vidéo apparaîtra automatiquement sur la page principale et est visible en plein écran.</p>
+<p>💡 Bonnes pratiques : toujours vérifier le lien et que la vidéo est publique. Si votre nom apparaît “undefined”, republiez la vidéo après mise à jour du code.</p>
 </div>
 
 </body>
