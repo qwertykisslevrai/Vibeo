@@ -2,81 +2,69 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Inscription / Connexion Firebase</title>
+<title>Connexion</title>
+<style>
+body{font-family:Arial;background:#f2f2f2;text-align:center;padding:30px}
+.box{background:#fff;padding:20px;border-radius:8px;max-width:400px;margin:auto}
+input,button{width:100%;padding:10px;margin:10px 0}
+</style>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendEmailVerification
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-// 🔑 Config Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyAQkCNtVCzXyIFLNlj9iKQvaMcg197zpKY",
-    authDomain: "tttt-57bdb.firebaseapp.com",
-    projectId: "tttt-57bdb",
-    storageBucket: "tttt-57bdb.firebasestorage.app",
-    messagingSenderId: "136572123296",
-    appId: "1:136572123296:web:886d093854c6827f10b1c5",
-    measurementId: "G-3E8ZVGPDTX"
-  };
+  apiKey: "AIzaSyAQkCNtVCzXyIFLNlj9iKQvaMcg197zpKY",
+  authDomain: "tttt-57bdb.firebaseapp.com",
+  projectId: "tttt-57bdb",
+  storageBucket: "tttt-57bdb.firebasestorage.app",
+  messagingSenderId: "136572123296",
+  appId: "1:136572123296:web:886d093854c6827f10b1c5",
+  measurementId: "G-3E8ZVGPDTX"
+};
+
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Fonction création de compte
-window.signup = async () => {
-  const email = document.getElementById("sEmail").value;
-  const password = document.getElementById("sPass").value;
-  if(password.length < 6){ alert("Mot de passe trop court"); return; }
-
-  try {
-    const userCred = await createUserWithEmailAndPassword(auth, email, password);
-    await sendEmailVerification(userCred.user);
-    alert("Compte créé ! Vérifie ton email avant de te connecter.");
-  } catch(e){
-    alert(e.message);
+onAuthStateChanged(auth,user=>{
+  if(user && user.emailVerified){
+    window.location.href="videos.html";
   }
+});
+
+window.register = async()=>{
+  const email = emailR.value;
+  const pass = passR.value;
+  const user = await createUserWithEmailAndPassword(auth,email,pass);
+  await sendEmailVerification(user.user);
+  alert("Compte créé ! Vérifie tes emails (spam aussi).");
 };
 
-// Fonction connexion
-window.login = async () => {
-  const email = document.getElementById("lEmail").value;
-  const password = document.getElementById("lPass").value;
-
-  try {
-    const userCred = await signInWithEmailAndPassword(auth, email, password);
-
-    if(!userCred.user.emailVerified){
-      alert("Email non vérifié !");
-      return;
-    }
-
-    // 🔑 Redirection vers dashboard
-    window.location.href = "dashboard.html";
-
-  } catch(e){
-    alert(e.message);
+window.login = async()=>{
+  const email = emailL.value;
+  const pass = passL.value;
+  const user = await signInWithEmailAndPassword(auth,email,pass);
+  if(!user.user.emailVerified){
+    alert("Email non vérifié !");
   }
 };
 </script>
-
 </head>
-<body>
-<h2>Créer un compte</h2>
-<input id="sEmail" type="email" placeholder="Email">
-<input id="sPass" type="password" placeholder="Mot de passe">
-<button onclick="signup()">S'inscrire</button>
 
-<hr>
+<body>
+<div class="box">
+<h2>Inscription</h2>
+<input id="emailR" placeholder="Email">
+<input id="passR" type="password" placeholder="Mot de passe">
+<button onclick="register()">Créer un compte</button>
 
 <h2>Connexion</h2>
-<input id="lEmail" type="email" placeholder="Email">
-<input id="lPass" type="password" placeholder="Mot de passe">
+<input id="emailL" placeholder="Email">
+<input id="passL" type="password">
 <button onclick="login()">Se connecter</button>
-<p>Si le mail n'arrive pas, verifie dans "courrier indesirable"</p>
+
+<p>Si le mail n’arrive pas, vérifie le courrier indésirable</p>
+</div>
 </body>
 </html>

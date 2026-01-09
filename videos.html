@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Vidéos</title>
+<style>
+body{font-family:Arial;background:#f2f2f2;padding:20px}
+.card{background:#fff;padding:15px;margin:10px auto;border-radius:8px;max-width:600px}
+video{width:100%}
+</style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, getDocs, collection, updateDoc, doc, increment } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAQkCNtVCzXyIFLNlj9iKQvaMcg197zpKY",
+  authDomain: "tttt-57bdb.firebaseapp.com",
+  projectId: "tttt-57bdb",
+  storageBucket: "tttt-57bdb.firebasestorage.app",
+  messagingSenderId: "136572123296",
+  appId: "1:136572123296:web:886d093854c6827f10b1c5",
+  measurementId: "G-3E8ZVGPDTX"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const snap = await getDocs(collection(db,"videos"));
+snap.forEach(d=>{
+  const v=d.data();
+  const div=document.createElement("div");
+  div.className="card";
+  div.innerHTML=`
+    <h3>${v.title}</h3>
+    <video src="${v.url}" controls></video>
+    <p>${v.views} vues</p>
+  `;
+  div.querySelector("video").onclick=async()=>{
+    await updateDoc(doc(db,"videos",d.id),{views:increment(1)});
+  };
+  document.body.appendChild(div);
+});
+</script>
+</head>
+<body>
+<h1>Vidéos populaires</h1>
+<a href="dashboard.html">Dashboard</a>
+</body>
+</html>
