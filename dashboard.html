@@ -5,7 +5,7 @@
 <title>Dashboard</title>
 <style>
 body{font-family:Arial;background:#eee;padding:20px}
-.box{background:#fff;padding:20px;border-radius:8px;margin-bottom:20px}
+.box{background:white;padding:20px;border-radius:10px;margin-bottom:20px}
 input,button{width:100%;padding:10px;margin:10px 0}
 </style>
 
@@ -30,22 +30,20 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 onAuthStateChanged(auth,user=>{
-  if(!user || !user.emailVerified){
-    location.href="index.html";
-  } else {
-    email.innerText=user.email;
-  }
+  if(!user || !user.emailVerified) location.href="index.html";
+  email.textContent = user.email;
 });
 
 window.addVideo = async()=>{
   await addDoc(collection(db,"videos"),{
     title:title.value,
-    url:url.value,
-    author:auth.currentUser.email,
+    url:url.value, // lien Drive /preview
+    authorEmail:auth.currentUser.email,
+    authorUid:auth.currentUser.uid,
     views:0,
     date:new Date()
   });
-  alert("Vidéo ajoutée !");
+  alert("Vidéo publiée !");
 };
 
 window.logout=()=>{
@@ -66,16 +64,16 @@ window.logout=()=>{
 <div class="box">
 <h2>Publier une vidéo</h2>
 <input id="title" placeholder="Titre">
-<input id="url" placeholder="Lien Google Drive DIRECT">
+<input id="url" placeholder="Lien Google Drive /preview">
 <button onclick="addVideo()">Publier</button>
 </div>
 
 <div class="box">
-<h3>Comment publier</h3>
+<h3>📤 Comment publier</h3>
 <p>1. Upload sur Google Drive</p>
 <p>2. Partage → public</p>
 <p>3. Lien :</p>
-<code>https://drive.google.com/uc?export=download&id=ID</code>
+<code>https://drive.google.com/file/d/ID/preview</code>
 </div>
 
 </body>
